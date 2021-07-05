@@ -184,9 +184,12 @@ namespace ClipSync
 
                     if (data != null && data.Length > 0)
                     {
-                        this.LogWriter("Your ClipBoard Updated with :");
+                        //this.LogWriter("Your ClipBoard Updated with :");
+                        lastSetText = data;
+                        waitCopyLoop = true;
+
+                        this.LogWriter("set:" + data);
                         ClipBoardHelper.SetText(data);
-                        this.LogWriter(data);
                     }
 
                 });
@@ -301,7 +304,7 @@ namespace ClipSync
 
             this.generaLogger.Info(t);
 
-            consoleTextBox.AppendText(Environment.NewLine + Environment.NewLine + t);
+            consoleTextBox.AppendText(t + Environment.NewLine);
             consoleTextBox.SelectionStart = consoleTextBox.Text.Length;
             consoleTextBox.ScrollToCaret();
 
@@ -320,7 +323,7 @@ namespace ClipSync
         ///  WindProc for getting ClipBoard Data
         /// </summary>
         /// <param name="m"></param>
-        string lastCopy = "";
+        string lastSetText = "";
         bool waitCopyLoop = false;
         protected override void WndProc(ref Message m)
         {
@@ -338,18 +341,18 @@ namespace ClipSync
                         //do something with it
                         if (copied_content != null && copied_content.Length > 0)
                         {
-                            if (!string.Equals(this.lastCopy, copied_content) || !waitCopyLoop)
+                            if (!string.Equals(this.lastSetText, copied_content) || !waitCopyLoop)
                             {
                                 double lastTime = TimeSpan.Parse(mTime).Seconds;
                                 mTime = DateTime.Now.ToLongTimeString();
                                 //if ((TimeSpan.Parse(mTime).Seconds - lastTime) > Convert.ToInt32(ConfigurationManager.AppSettings["number_of_seconds_interval_between_copy"])) {
-                                this.LogWriter(copied_content);
+                                this.LogWriter("clip:" + copied_content);
                                 _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"], copied_content);
                                 //}
-                                lastCopy = copied_content;
-                                waitCopyLoop = true;
+                                //lastSetText = copied_content;
+                                //waitCopyLoop = true;
                             }
-                            else if (waitCopyLoop)
+                            else
                                 waitCopyLoop = false;
                         }
                     }
