@@ -1,12 +1,15 @@
 ﻿using System.Threading;
+using System.Windows.Forms;
 using NLog;
 
-namespace ClipSync.Helpers {
+namespace ClipSync.Helpers
+{
 
     /// <summary>
     /// Windows ClipBoard Helper
     /// </summary>
-    public static class ClipBoardHelper {
+    public static class ClipBoardHelper
+    {
 
         /// <summary>
         /// Copy History Logger Target
@@ -18,18 +21,21 @@ namespace ClipSync.Helpers {
         /// Set the text value to Windows ClipBoard
         /// </summary>
         /// <param name="p_Text">text to set as last copied content</param>
-        public static void SetText(string p_Text) {
-            if (p_Text == null) {
+        public static void SetText(string p_Text)
+        {
+            if (p_Text == null)
+            {
                 p_Text = "";
             }
 
             copyHistoryLogger.Info(p_Text);
 
             Thread STAThread = new Thread(
-                    delegate () {
+                    delegate ()
+                    {
                         // Use a fully qualified name for Clipboard otherwise it
                         // will end up calling itself.
-                        System.Windows.Forms.Clipboard.SetText(p_Text);
+                        Clipboard.SetText(p_Text, TextDataFormat.UnicodeText);
                     });
             STAThread.SetApartmentState(ApartmentState.STA);
             STAThread.Start();
@@ -40,10 +46,12 @@ namespace ClipSync.Helpers {
         /// Get the text value to Windows ClipBoard
         /// </summary>
         /// <returns>clipboard text content string</returns>
-        public static string GetText() {
+        public static string GetText()
+        {
             string ReturnValue = string.Empty;
             Thread STAThread = new Thread(
-                delegate () {
+                delegate ()
+                {
                     // Use a fully qualified name for Clipboard otherwise it
                     // will end up calling itself.
                     ReturnValue = System.Windows.Forms.Clipboard.GetText();

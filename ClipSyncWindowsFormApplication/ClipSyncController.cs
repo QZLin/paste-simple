@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ClipSync
@@ -180,11 +181,10 @@ namespace ClipSync
 
                 this._hub.On(ConfigurationManager.AppSettings["recieve_copied_text_signalr_method_name"], delegate (String data)
                 {
-                    //Console.WriteLine("Recieved Text :" + data);
-
+                    data = Uri.UnescapeDataString(data);
+                    //string str = Encoding.UTF8.GetString(Convert.FromBase64String(data));
                     if (data != null && data.Length > 0)
                     {
-                        //this.LogWriter("Your ClipBoard Updated with :");
                         lastSetText = data;
                         waitCopyLoop = true;
 
@@ -333,24 +333,21 @@ namespace ClipSync
                 if (m.Msg == NativeMethods.WM_CLIPBOARDUPDATE)
                 {
 
-                    IDataObject iData = Clipboard.GetDataObject();      // Clipboard's data
+                    IDataObject iData = Clipboard.GetDataObject();  // Clipboard's data
 
-                    if (m.Msg == NativeMethods.WM_CLIPBOARDUPDATE)
+
+                    if (iData.GetDataPresent(DataFormats.UnicodeText) || iData.GetDataPresent(DataFormats.Text))
                     {
-                        string copied_content = (string)iData.GetData(DataFormats.Text);
-                        //do something with it
+                        string copied_content = Clipboard.GetText();
                         if (copied_content != null && copied_content.Length > 0)
                         {
                             if (!string.Equals(this.lastSetText, copied_content) || !waitCopyLoop)
                             {
-                                double lastTime = TimeSpan.Parse(mTime).Seconds;
-                                mTime = DateTime.Now.ToLongTimeString();
-                                //if ((TimeSpan.Parse(mTime).Seconds - lastTime) > Convert.ToInt32(ConfigurationManager.AppSettings["number_of_seconds_interval_between_copy"])) {
                                 this.LogWriter("clip:" + copied_content);
-                                _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"], copied_content);
-                                //}
-                                //lastSetText = copied_content;
-                                //waitCopyLoop = true;
+                                var encoded = Uri.EscapeDataString(copied_content);
+                                //byte[] byteArray = Encoding.UTF8.GetBytes(copied_content);
+                                _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"],
+                                    encoded);
                             }
                             else
                                 waitCopyLoop = false;
@@ -359,7 +356,7 @@ namespace ClipSync
                     else if (iData.GetDataPresent(DataFormats.Bitmap))
                     {
                         //Bitmap image = (Bitmap)iData.GetData(DataFormats.Bitmap);   // Clipboard image
-                        //do something with it
+                        //TODO handle image
                     }
                 }
 
