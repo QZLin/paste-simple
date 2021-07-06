@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using NLog;
 
-namespace ClipSync.Helpers
+namespace PasteSimple.Helpers
 {
 
     /// <summary>

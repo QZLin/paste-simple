@@ -1,11 +1,11 @@
-﻿using ClipSync.Models;
+﻿using PasteSimple.Models;
 using NLog;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ClipSync.SignalR {
+namespace PasteSimple.SignalR {
     /// <summary>
     /// Users
     /// </summary>

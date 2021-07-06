@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace ClipSync.Models {
+namespace PasteSimple.Models {
     /// <summary>
     ///  User Connection Model
     /// </summary>

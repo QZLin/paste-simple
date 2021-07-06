@@ -4,8 +4,8 @@ using Microsoft.Owin.Cors;
 using Owin;
 
 
-[assembly: OwinStartupAttribute(typeof(ClipSync.SignalR.Startup))]
-namespace ClipSync.SignalR {
+[assembly: OwinStartupAttribute(typeof(PasteSimple.SignalR.Startup))]
+namespace PasteSimple.SignalR {
 
     class Startup {
         public void Configuration(IAppBuilder app) {

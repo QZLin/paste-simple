@@ -1,5 +1,5 @@
-﻿namespace ClipSync {
-	partial class ClipSyncControlForm {
+﻿namespace PasteSimple {
+	partial class PasteSimpleMainForm {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -23,7 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClipSyncControlForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasteSimpleMainForm));
             this.loginButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.RichTextBox();
             this.clientGroupBox = new System.Windows.Forms.GroupBox();
@@ -46,10 +46,10 @@
             this.serverGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
-            // Login_Button
+            // loginButton
             // 
             this.loginButton.Location = new System.Drawing.Point(120, 142);
-            this.loginButton.Name = "Login_Button";
+            this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(75, 21);
             this.loginButton.TabIndex = 3;
             this.loginButton.Text = "Login";
@@ -216,7 +216,7 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "UID";
             // 
-            // ClipSyncControlForm
+            // PasteSimpleMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -225,9 +225,9 @@
             this.Controls.Add(this.clientGroupBox);
             this.Controls.Add(this.consoleTextBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "ClipSyncControlForm";
-            this.Text = "ClipSync";
-            this.Load += new System.EventHandler(this.ClipSyncControlForm_Load);
+            this.Name = "PasteSimpleMainForm";
+            this.Text = "PasteSimple";
+            this.Load += new System.EventHandler(this.PasteSimpleMainForm_Load);
             this.clientGroupBox.ResumeLayout(false);
             this.clientGroupBox.PerformLayout();
             this.serverGroupBox.ResumeLayout(false);

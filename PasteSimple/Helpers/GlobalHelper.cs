@@ -4,7 +4,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using NLog;
 
-namespace ClipSync.Helpers {
+namespace PasteSimple.Helpers {
     /// <summary>
     /// All Global Helper Methods
     /// </summary>

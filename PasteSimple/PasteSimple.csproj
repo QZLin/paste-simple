@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B4E1FB53-B275-4DBE-9959-68645CAEAAE3}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ClipSync</RootNamespace>
-    <AssemblyName>ClipSync</AssemblyName>
+    <RootNamespace>PasteSimple</RootNamespace>
+    <AssemblyName>PasteSimple</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -44,7 +44,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\ClipSync.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\PasteSimple.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -54,10 +54,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\ClipSync.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\PasteSimple.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ClipSync.Program</StartupObject>
+    <StartupObject>PasteSimple.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>DC4F065B21A96957DB1CBE883D28ADE21A60E6AB</ManifestCertificateThumbprint>
@@ -235,11 +235,11 @@
   <ItemGroup>
     <Compile Include="Helpers\ClipBoardHelper.cs" />
     <Compile Include="Helpers\GlobalHelper.cs" />
-    <Compile Include="ClipSyncController.cs">
+    <Compile Include="PasteSimpleMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ClipSyncController.Designer.cs">
-      <DependentUpon>ClipSyncController.cs</DependentUpon>
+    <Compile Include="PasteSimpleMain.Designer.cs">
+      <DependentUpon>PasteSimpleMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\UserConnection.cs" />
     <Compile Include="Program.cs" />
@@ -247,8 +247,8 @@
     <Compile Include="SignalR\SignalRhub.cs" />
     <Compile Include="SignalR\Startup.cs" />
     <Compile Include="SignalR\Users.cs" />
-    <EmbeddedResource Include="ClipSyncController.resx">
-      <DependentUpon>ClipSyncController.cs</DependentUpon>
+    <EmbeddedResource Include="PasteSimpleMain.resx">
+      <DependentUpon>PasteSimpleMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

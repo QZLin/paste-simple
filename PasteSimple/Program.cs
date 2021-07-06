@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ClipSync
+namespace PasteSimple
 {
     static class Program
     {
 
-        internal static ClipSyncControlForm loginSignUpForm { get; set; }
+        internal static PasteSimpleMainForm loginSignUpForm { get; set; }
 
         /// <summary>
         /// The main entry point for the application.
@@ -16,10 +16,10 @@ namespace ClipSync
         {
             void LaunchApp()
             {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            loginSignUpForm = new ClipSyncControlForm();
-            Application.Run(loginSignUpForm);
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                loginSignUpForm = new PasteSimpleMainForm();
+                Application.Run(loginSignUpForm);
             }
 
 

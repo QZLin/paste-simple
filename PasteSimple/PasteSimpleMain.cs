@@ -1,4 +1,4 @@
-﻿using ClipSync.Helpers;
+﻿using PasteSimple.Helpers;
 using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Owin.Hosting;
 using NLog;
@@ -11,13 +11,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-namespace ClipSync
+namespace PasteSimple
 {
 
     /// <summary>
     /// Mail Home Form of ClipSync
     /// </summary>
-    public partial class ClipSyncControlForm : Form
+    public partial class PasteSimpleMainForm : Form
     {
 
         /// <summary>
@@ -59,13 +59,13 @@ namespace ClipSync
         /// <summary>
         /// Default Constructor
         /// </summary>
-        internal ClipSyncControlForm()
+        internal PasteSimpleMainForm()
         {
             InitializeComponent();
             this.globalHelper = new GlobalHelper();
         }
 
-        private void ClipSyncControlForm_Load(object sender, EventArgs e)
+        private void PasteSimpleMainForm_Load(object sender, EventArgs e)
         {
             try
             {
@@ -169,7 +169,7 @@ namespace ClipSync
 
             if (!isSignalRConnected)
             {
-                MessageBox.Show("ClipSync Server is not running!!!", "Warning");
+                MessageBox.Show("PasteSimple Server is not running!!!", "Warning");
             }
             else
             {
@@ -252,14 +252,14 @@ namespace ClipSync
                 int serverPort = Convert.ToInt32(this.serverPortTextBox.Text);
 
                 this.LogWriter("Checking the status of inbound port: " + serverPort + " Please wait...");
-                if (this.globalHelper.IsPortOpened(serverPort, "ClipSync"))
+                if (this.globalHelper.IsPortOpened(serverPort, "PasteSimple"))
                 {
                     this.LogWriter("Port " + serverPort + " is already open");
                 }
                 else
                 {
                     this.LogWriter("Opening the inbound port: " + serverPort + " Please wait...");
-                    if (this.globalHelper.OpenInboundFirewallPort(serverPort, "ClipSync", serverPort.ToString()))
+                    if (this.globalHelper.OpenInboundFirewallPort(serverPort, "PasteSimple", serverPort.ToString()))
                     {
                         this.LogWriter("Successfully opened the inbound port : " + serverPort);
                     }

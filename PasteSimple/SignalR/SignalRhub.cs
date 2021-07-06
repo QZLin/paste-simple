@@ -1,4 +1,4 @@
-﻿using ClipSync.Models;
+﻿using PasteSimple.Models;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using NLog;
@@ -6,7 +6,7 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 
-namespace ClipSync.SignalR {
+namespace PasteSimple.SignalR {
 
     /// <summary>
     /// Signal R Hub Main Class
