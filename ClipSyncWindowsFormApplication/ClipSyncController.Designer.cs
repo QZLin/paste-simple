@@ -24,7 +24,7 @@
 		/// </summary>
 		private void InitializeComponent() {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClipSyncControlForm));
-            this.Login_Button = new System.Windows.Forms.Button();
+            this.loginButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.RichTextBox();
             this.clientGroupBox = new System.Windows.Forms.GroupBox();
             this.connectServerPortTextBox = new System.Windows.Forms.TextBox();
@@ -48,13 +48,13 @@
             // 
             // Login_Button
             // 
-            this.Login_Button.Location = new System.Drawing.Point(120, 142);
-            this.Login_Button.Name = "Login_Button";
-            this.Login_Button.Size = new System.Drawing.Size(75, 21);
-            this.Login_Button.TabIndex = 3;
-            this.Login_Button.Text = "Login";
-            this.Login_Button.UseVisualStyleBackColor = true;
-            this.Login_Button.Click += new System.EventHandler(this.LoginButton_Click);
+            this.loginButton.Location = new System.Drawing.Point(120, 142);
+            this.loginButton.Name = "Login_Button";
+            this.loginButton.Size = new System.Drawing.Size(75, 21);
+            this.loginButton.TabIndex = 3;
+            this.loginButton.Text = "Login";
+            this.loginButton.UseVisualStyleBackColor = true;
+            this.loginButton.Click += new System.EventHandler(this.LoginButton_Click);
             // 
             // consoleTextBox
             // 
@@ -73,7 +73,7 @@
             this.clientGroupBox.Controls.Add(this.connectPortLabel);
             this.clientGroupBox.Controls.Add(this.connectServerAddressTextBox);
             this.clientGroupBox.Controls.Add(this.connectServerAddressLabel);
-            this.clientGroupBox.Controls.Add(this.Login_Button);
+            this.clientGroupBox.Controls.Add(this.loginButton);
             this.clientGroupBox.Location = new System.Drawing.Point(412, 11);
             this.clientGroupBox.Name = "clientGroupBox";
             this.clientGroupBox.Size = new System.Drawing.Size(321, 169);
@@ -238,7 +238,7 @@
 
 		#endregion
 
-		private System.Windows.Forms.Button Login_Button;
+		private System.Windows.Forms.Button loginButton;
         private System.Windows.Forms.GroupBox clientGroupBox;
         private System.Windows.Forms.GroupBox serverGroupBox;
         private System.Windows.Forms.TextBox serverAddressTextBox;

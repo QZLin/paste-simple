@@ -86,8 +86,8 @@ namespace ClipSync
                     File.WriteAllText("last_uid", this.connectUidTextBox.Text);
                 }
                 //auto start server and self login on start
-                this.StartServerButton_Click(null, null);
-                this.LoginButton_Click(null, null);
+                this.startServerButton.PerformClick();
+                this.loginButton.PerformClick();
 
             }
             catch (Exception ex)
@@ -139,7 +139,7 @@ namespace ClipSync
         private void LoginButton_Click(object sender, EventArgs e)
         {
 
-            Login_Button.Enabled = false;
+            loginButton.Enabled = false;
 
             string serverAddress = this.connectServerAddressTextBox.Text;
             string serverPort = this.connectServerPortTextBox.Text;
@@ -162,7 +162,7 @@ namespace ClipSync
             catch (Exception ex)
             {
                 isSignalRConnected = false;
-                Login_Button.Enabled = true;
+                loginButton.Enabled = true;
                 this.LogWriter("Exception in connecting to SignalR Hub : " + ex.ToString());
                 this.generaLogger.Error(ex);
             }
