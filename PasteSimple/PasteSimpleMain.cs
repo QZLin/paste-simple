@@ -10,6 +10,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using System.Net;
 
 namespace PasteSimple
 {
@@ -67,34 +68,31 @@ namespace PasteSimple
 
         private void PasteSimpleMainForm_Load(object sender, EventArgs e)
         {
-            try
+            //try
+            //{
+
+            this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
+
+            this.serverGroupBox.Show();
+            this.serverAddressTextBox.Text = "*";
+
+            if (File.Exists("last_uid"))
+                this.connectUidTextBox.Text = File.ReadAllText("last_uid");
+            else
             {
-
-                //this.LogWriter("-------------------");
-                //this.LogWriter("Enter address and port then start server and wait.");
-                this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
-
-                this.serverGroupBox.Show();
-                this.serverAddressTextBox.Text = "*";
-                //this.serverAddressTextBox.Text = "localhost";
-
-                if (File.Exists("last_uid"))
-                    this.connectUidTextBox.Text = File.ReadAllText("last_uid");
-                else
-                {
-                    this.connectUidTextBox.Text = new Random().Next(1000, 9999).ToString();
-                    File.WriteAllText("last_uid", this.connectUidTextBox.Text);
-                }
-                //auto start server and self login on start
-                this.startServerButton.PerformClick();
-                this.loginButton.PerformClick();
-
+                this.connectUidTextBox.Text = new Random().Next(1000, 9999).ToString();
+                File.WriteAllText("last_uid", this.connectUidTextBox.Text);
             }
-            catch (Exception ex)
-            {
-                this.LogWriter(ex.ToString());
-                this.generaLogger.Error(ex);
-            }
+            //auto start server and self login on start
+            this.startServerButton.PerformClick();
+            this.loginButton.PerformClick();
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    this.LogWriter(ex.ToString());
+            //    this.generaLogger.Error(ex);
+            //}
         }
 
         /// <summary>
@@ -147,29 +145,40 @@ namespace PasteSimple
 
             this.LogWriter("Connecting to server");
 
-            IDictionary<string, string> keyValuePairs = new Dictionary<string, string>();
-            keyValuePairs.Add("uid", uid);
-            keyValuePairs.Add("platform", "WINDOWS");
-            keyValuePairs.Add("device_id", globalHelper.GetMacAddress());
+            IDictionary<string, string> keyValuePairs = new Dictionary<string, string>
+            {
+                { "uid", uid },
+                { "platform", "windows" },
+                { "device_id", globalHelper.GetMacAddress() }
+            };
 
+            var connection = new HubConnection("http://" + serverAddress + ":" + serverPort, keyValuePairs);
+            this._hub = connection.CreateHubProxy(ConfigurationManager.AppSettings["hub_name"]);
             try
             {
-                var connection = new HubConnection("http://" + serverAddress + ":" + serverPort, keyValuePairs);
-                this._hub = connection.CreateHubProxy(ConfigurationManager.AppSettings["hub_name"]);
                 connection.Start().Wait();
-                isSignalRConnected = true;
             }
+            catch (UriFormatException exception)
+            {
+                MessageBox.Show(exception.ToString());
+                isSignalRConnected = false;
+                loginButton.Enabled = true;
+                return;
+            }
+            isSignalRConnected = true;
+            /*
             catch (Exception ex)
             {
                 isSignalRConnected = false;
                 loginButton.Enabled = true;
                 this.LogWriter("Exception in connecting to SignalR Hub : " + ex.ToString());
                 this.generaLogger.Error(ex);
-            }
+            }*/
 
             if (!isSignalRConnected)
             {
                 MessageBox.Show("PasteSimple Server is not running!!!", "Warning");
+                this.LogWriter("Warning: PasteSimple Server is not running!!!");
             }
             else
             {
@@ -196,6 +205,23 @@ namespace PasteSimple
             }
 
         }
+        public static bool tryFindInnerException<T>(Exception top, out T foundException) where T : Exception
+        {
+            if (top == null)
+            {
+                foundException = null;
+                return false;
+            }
+
+            Console.WriteLine(top.GetType());
+            if (typeof(T) == top.GetType())
+            {
+                foundException = (T)top;
+                return true;
+            }
+
+            return tryFindInnerException<T>(top.InnerException, out foundException);
+        }
 
         /// <summary>
         /// Start Server Button Click
@@ -207,21 +233,31 @@ namespace PasteSimple
             this.startServerButton.Enabled = false;
             string url = "http://" + this.serverAddressTextBox.Text + ":" + this.serverPortTextBox.Text + "/";
             this.LogWriter(string.Format("Starting server on: {0}", url));
+            this.LogWriter(string.Format("Test your server: {0}", url + "signalr/hubs"));
+            this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
             try
             {
-                //SignalR = WebApp.Start<Startup>(url);
+                //var a = 0; var b = 10 / a; //test other exception
                 signalRDisposable = WebApp.Start(url);
-                this.LogWriter(string.Format("Test your server: {0}", url + "signalr/hubs"));
-                //this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
-                //this.LogWriter("Open the below link in your browser and if it opens then you can proceed further");
-                //this.LogWriter("http://" + globalHelper.GetMachineIpAddress() + ":" + this.serverPortTextBox.Text + "/signalr/hubs");
-                this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
-                this.connectServerAddressTextBox.Text = globalHelper.GetMachineIpAddress();
-                this.connectServerPortTextBox.Text = this.serverPortTextBox.Text;
-                this.startServerButton.Enabled = false;
-
-                this.OpenPortButton.PerformClick();
             }
+            catch (System.Reflection.TargetInvocationException exception)
+            {
+                if (tryFindInnerException<HttpListenerException>(exception, out var httpListenerException))
+                {
+                    MessageBox.Show(httpListenerException.ToString());
+                    this.startServerButton.Enabled = true;
+                    return;
+                }
+
+                throw exception;
+            }
+
+            this.connectServerAddressTextBox.Text = globalHelper.GetMachineIpAddress();
+            this.connectServerPortTextBox.Text = this.serverPortTextBox.Text;
+            this.startServerButton.Enabled = false;
+
+            this.OpenPortButton.PerformClick();
+            /*}
             catch (System.Reflection.TargetInvocationException ex)
             {
                 this.LogWriter("You need to run as administrator");
@@ -235,7 +271,7 @@ namespace PasteSimple
                 this.LogWriter(ex.ToString());
                 this.generaLogger.Error(ex);
                 this.startServerButton.Enabled = true;
-            }
+            }*/
         }
 
         /// <summary>
@@ -245,33 +281,30 @@ namespace PasteSimple
         /// <param name="e"></param>
         private void OpenPortButton_Click(object sender, EventArgs e)
         {
-            try
+            this.OpenPortButton.Enabled = false;
+            int serverPort = Convert.ToInt32(this.serverPortTextBox.Text);
+
+            this.LogWriter("Checking the status of inbound port: " + serverPort + " Please wait...");
+            if (this.globalHelper.IsPortOpened(serverPort, "PasteSimple"))
             {
-
-                this.OpenPortButton.Enabled = false;
-                int serverPort = Convert.ToInt32(this.serverPortTextBox.Text);
-
-                this.LogWriter("Checking the status of inbound port: " + serverPort + " Please wait...");
-                if (this.globalHelper.IsPortOpened(serverPort, "PasteSimple"))
+                this.LogWriter("Port " + serverPort + " is already open");
+            }
+            else
+            {
+                this.LogWriter("Opening the inbound port: " + serverPort + " Please wait...");
+                if (this.globalHelper.OpenInboundFirewallPort(serverPort, "PasteSimple", serverPort.ToString()))
                 {
-                    this.LogWriter("Port " + serverPort + " is already open");
+                    this.LogWriter("Successfully opened the inbound port : " + serverPort);
                 }
                 else
                 {
-                    this.LogWriter("Opening the inbound port: " + serverPort + " Please wait...");
-                    if (this.globalHelper.OpenInboundFirewallPort(serverPort, "PasteSimple", serverPort.ToString()))
-                    {
-                        this.LogWriter("Successfully opened the inbound port : " + serverPort);
-                    }
-                    else
-                    {
-                        this.LogWriter("Failed to open the inbound port : " + serverPort);
-                        this.LogWriter("Try running as administrator");
-                        MessageBox.Show("Try running as administrator", "Error");
-                    }
+                    this.LogWriter("Failed to open the inbound port : " + serverPort);
+                    this.LogWriter("Try running as administrator");
+                    MessageBox.Show("Try running as administrator", "Error");
                 }
-                this.OpenPortButton.Enabled = true;
             }
+            this.OpenPortButton.Enabled = true;
+            /*}
             catch (System.Reflection.TargetInvocationException ex)
             {
                 this.LogWriter("You need to run as administrator");
@@ -283,27 +316,27 @@ namespace PasteSimple
                 this.OpenPortButton.Enabled = true;
                 this.LogWriter(ex.ToString());
                 this.generaLogger.Error(ex);
-            }
+            }*/
         }
 
         /// <summary>
         /// Log Writer on Form
         /// </summary>
-        /// <param name="t">string text to write</param>
-        internal void LogWriter(string t)
+        /// <param name="log_text">string text to write</param>
+        internal void LogWriter(string log_text)
         {
 
             if (consoleTextBox.InvokeRequired)
             {
                 this.Invoke((Action)(() =>
-                    LogWriter(t)
+                    LogWriter(log_text)
                 ));
                 return;
             }
 
-            this.generaLogger.Info(t);
+            this.generaLogger.Info(log_text);
 
-            consoleTextBox.AppendText(t + Environment.NewLine);
+            consoleTextBox.AppendText(log_text + Environment.NewLine);
             consoleTextBox.SelectionStart = consoleTextBox.Text.Length;
             consoleTextBox.ScrollToCaret();
 
@@ -326,46 +359,46 @@ namespace PasteSimple
         bool waitCopyLoop = false;
         protected override void WndProc(ref Message m)
         {
-            try
+            /*try
+            {*/
+
+            if (m.Msg == NativeMethods.WM_CLIPBOARDUPDATE)
             {
 
-                if (m.Msg == NativeMethods.WM_CLIPBOARDUPDATE)
+                IDataObject iData = Clipboard.GetDataObject();  // Clipboard's data
+
+
+                if (iData.GetDataPresent(DataFormats.UnicodeText) || iData.GetDataPresent(DataFormats.Text))
                 {
-
-                    IDataObject iData = Clipboard.GetDataObject();  // Clipboard's data
-
-
-                    if (iData.GetDataPresent(DataFormats.UnicodeText) || iData.GetDataPresent(DataFormats.Text))
+                    string copied_content = Clipboard.GetText();
+                    if (copied_content != null && copied_content.Length > 0)
                     {
-                        string copied_content = Clipboard.GetText();
-                        if (copied_content != null && copied_content.Length > 0)
+                        if (!string.Equals(this.lastSetText, copied_content) || !waitCopyLoop)
                         {
-                            if (!string.Equals(this.lastSetText, copied_content) || !waitCopyLoop)
-                            {
-                                this.LogWriter("clip: " + copied_content);
-                                var encoded = Uri.EscapeDataString(copied_content);
-                                //byte[] byteArray = Encoding.UTF8.GetBytes(copied_content);
-                                _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"],
-                                    encoded);
-                            }
-                            else
-                                waitCopyLoop = false;
+                            this.LogWriter("clip: " + copied_content);
+                            var encoded = Uri.EscapeDataString(copied_content);
+                            //byte[] byteArray = Encoding.UTF8.GetBytes(copied_content);
+                            _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"],
+                                encoded);
                         }
-                    }
-                    else if (iData.GetDataPresent(DataFormats.Bitmap))
-                    {
-                        //Bitmap image = (Bitmap)iData.GetData(DataFormats.Bitmap);   // Clipboard image
-                        //TODO handle image
+                        else
+                            waitCopyLoop = false;
                     }
                 }
-
-                base.WndProc(ref m);
+                else if (iData.GetDataPresent(DataFormats.Bitmap))
+                {
+                    //Bitmap image = (Bitmap)iData.GetData(DataFormats.Bitmap);   // Clipboard image
+                    //TODO handle image
+                }
             }
+
+            base.WndProc(ref m);
+            /*}
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
                 this.generaLogger.Error(ex);
-            }
+            }*/
         }
 
 
