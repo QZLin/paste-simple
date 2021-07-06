@@ -63,7 +63,7 @@
             this.consoleTextBox.ReadOnly = true;
             this.consoleTextBox.Size = new System.Drawing.Size(721, 273);
             this.consoleTextBox.TabIndex = 6;
-            this.consoleTextBox.Text = "Logs Here";
+            this.consoleTextBox.Text = "";
             // 
             // clientGroupBox
             // 

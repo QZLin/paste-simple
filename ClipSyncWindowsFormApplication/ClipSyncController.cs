@@ -70,8 +70,8 @@ namespace ClipSync
             try
             {
 
-                this.LogWriter("-------------------");
-                this.LogWriter("Enter address and port then start server and wait.");
+                //this.LogWriter("-------------------");
+                //this.LogWriter("Enter address and port then start server and wait.");
                 this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
 
                 this.serverGroupBox.Show();
@@ -145,7 +145,7 @@ namespace ClipSync
             string serverPort = this.connectServerPortTextBox.Text;
             string uid = this.connectUidTextBox.Text;
 
-            this.LogWriter("Connecting to the ClipSync server");
+            this.LogWriter("Connecting to server");
 
             IDictionary<string, string> keyValuePairs = new Dictionary<string, string>();
             keyValuePairs.Add("uid", uid);
@@ -169,13 +169,13 @@ namespace ClipSync
 
             if (!isSignalRConnected)
             {
-                MessageBox.Show("ClipSync Server is not running, so Please close the whole app and try again after sometime.", "Warning");
+                MessageBox.Show("ClipSync Server is not running!!!", "Warning");
             }
             else
             {
 
                 //MessageBox.Show("ClipSync Server is now connected, You need to connect to this uid: " + uid + " from all your devices. Now you can minimise this window", "Success");
-                this.LogWriter("ClipSync Server is now connected, You need to connect to this uid: " + uid + " from all your devices. Now you can minimise this window");
+                this.LogWriter("Server connected, uid: " + uid);
 
                 AddClipBoardListener();
 
@@ -188,7 +188,7 @@ namespace ClipSync
                         lastSetText = data;
                         waitCopyLoop = true;
 
-                        this.LogWriter("set:" + data);
+                        this.LogWriter("set: " + data);
                         ClipBoardHelper.SetText(data);
                     }
 
@@ -205,18 +205,17 @@ namespace ClipSync
         private void StartServerButton_Click(object sender, EventArgs e)
         {
             this.startServerButton.Enabled = false;
-            this.LogWriter("Starting server on ");
             string url = "http://" + this.serverAddressTextBox.Text + ":" + this.serverPortTextBox.Text + "/";
-            this.LogWriter(url);
+            this.LogWriter(string.Format("Starting server on: {0}", url));
             try
             {
                 //SignalR = WebApp.Start<Startup>(url);
                 signalRDisposable = WebApp.Start(url);
-                this.LogWriter(string.Format("Server running at {0}", url + "signalr/hubs"));
-                this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
-                this.LogWriter("Open the below link in your browser and if it opens then you can proceed further");
-                this.LogWriter("http://" + globalHelper.GetMachineIpAddress() + ":" + this.serverPortTextBox.Text + "/signalr/hubs");
-                this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT IS : " + this.serverPortTextBox.Text);
+                this.LogWriter(string.Format("Test your server: {0}", url + "signalr/hubs"));
+                //this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
+                //this.LogWriter("Open the below link in your browser and if it opens then you can proceed further");
+                //this.LogWriter("http://" + globalHelper.GetMachineIpAddress() + ":" + this.serverPortTextBox.Text + "/signalr/hubs");
+                this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
                 this.connectServerAddressTextBox.Text = globalHelper.GetMachineIpAddress();
                 this.connectServerPortTextBox.Text = this.serverPortTextBox.Text;
                 this.startServerButton.Enabled = false;
@@ -343,7 +342,7 @@ namespace ClipSync
                         {
                             if (!string.Equals(this.lastSetText, copied_content) || !waitCopyLoop)
                             {
-                                this.LogWriter("clip:" + copied_content);
+                                this.LogWriter("clip: " + copied_content);
                                 var encoded = Uri.EscapeDataString(copied_content);
                                 //byte[] byteArray = Encoding.UTF8.GetBytes(copied_content);
                                 _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"],
