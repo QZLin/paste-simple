@@ -96,10 +96,51 @@ namespace PasteSimple
         }
 
         /// <summary>
+        /// Start Server Button Click
+        /// </summary>
+        private void StartServerButton_Click(object sender, EventArgs e)
+        {
+            this.startServerButton.Enabled = false;
+            string url = "http://" + this.serverAddressTextBox.Text + ":" + this.serverPortTextBox.Text + "/";
+            this.LogWriter(string.Format("Starting server on: {0}", url));
+            this.LogWriter(string.Format("Test your server: {0}", url + "signalr/hubs"));
+            this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
+            try
+            {
+                //var a = 0; var b = 10 / a; //test other exception
+                signalRDisposable = WebApp.Start(url);
+            }
+            catch (System.Reflection.TargetInvocationException exception)
+            {
+                if (TryFindInnerException<HttpListenerException>(exception, out var httpListenerException))
+                {
+                    MessageBox.Show(httpListenerException.ToString());
+                    this.startServerButton.Enabled = true;
+                    return;
+                }
+
+                throw exception;
+            }
+
+            this.connectServerAddressTextBox.Text = globalHelper.GetMachineIpAddress();
+            this.connectServerPortTextBox.Text = this.serverPortTextBox.Text;
+            this.startServerButton.Enabled = false;
+
+            this.OpenPortButton.PerformClick();
+            /*}
+            catch (System.Reflection.TargetInvocationException ex)
+            {
+                this.LogWriter("You need to run as administrator");
+                this.LogWriter("Only server address localhost is allowed without administrator permissions");
+                MessageBox.Show("You need to run as administrator", "Error");
+                this.generaLogger.Error(ex);
+                this.startServerButton.Enabled = true;
+            }*/
+        }
+
+        /// <summary>
         /// Server Port text box key press event
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void serverPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(Char.IsDigit(e.KeyChar) || (e.KeyChar == (char)Keys.Back)))
@@ -109,8 +150,6 @@ namespace PasteSimple
         /// <summary>
         /// Connect To Server Port Key Press Event
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void connectServerPortTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!(Char.IsDigit(e.KeyChar) || (e.KeyChar == (char)Keys.Back)))
@@ -120,8 +159,6 @@ namespace PasteSimple
         /// <summary>
         /// Connect Uid Key Press Event
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void connectUidTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
 
@@ -132,8 +169,6 @@ namespace PasteSimple
         /// <summary>
         /// Login Button Click
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void LoginButton_Click(object sender, EventArgs e)
         {
 
@@ -161,11 +196,12 @@ namespace PasteSimple
             catch (UriFormatException exception)
             {
                 MessageBox.Show(exception.ToString());
-                isSignalRConnected = false;
+                this.LogWriter("Warning: PasteSimple Server is not running!!!");
+                //isSignalRConnected = false;
                 loginButton.Enabled = true;
                 return;
             }
-            isSignalRConnected = true;
+            //isSignalRConnected = true;
             /*
             catch (Exception ex)
             {
@@ -174,38 +210,33 @@ namespace PasteSimple
                 this.LogWriter("Exception in connecting to SignalR Hub : " + ex.ToString());
                 this.generaLogger.Error(ex);
             }*/
+            this.LogWriter("Server connected, uid: " + uid);
 
-            if (!isSignalRConnected)
+            AddClipBoardListener();
+            this._hub.On(ConfigurationManager.AppSettings["recieve_copied_text_signalr_method_name"], delegate (String data)
             {
-                MessageBox.Show("PasteSimple Server is not running!!!", "Warning");
-                this.LogWriter("Warning: PasteSimple Server is not running!!!");
-            }
-            else
-            {
-
-                //MessageBox.Show("ClipSync Server is now connected, You need to connect to this uid: " + uid + " from all your devices. Now you can minimise this window", "Success");
-                this.LogWriter("Server connected, uid: " + uid);
-
-                AddClipBoardListener();
-
-                this._hub.On(ConfigurationManager.AppSettings["recieve_copied_text_signalr_method_name"], delegate (String data)
+                data = Uri.UnescapeDataString(data);
+                if (data != null && data.Length > 0)
                 {
-                    data = Uri.UnescapeDataString(data);
-                    //string str = Encoding.UTF8.GetString(Convert.FromBase64String(data));
-                    if (data != null && data.Length > 0)
-                    {
-                        lastSetText = data;
-                        waitCopyLoop = true;
+                    // avoid retransfer setted text
+                    lastSetText = data;
+                    waitCopyLoop = true;
 
-                        this.LogWriter("set: " + data);
-                        ClipBoardHelper.SetText(data);
-                    }
+                    this.LogWriter("set: " + data);
+                    ClipBoardHelper.SetText(data);
+                }
 
-                });
-            }
+            });
 
         }
-        public static bool tryFindInnerException<T>(Exception top, out T foundException) where T : Exception
+        /// <summary>
+        /// Use to get inner exception
+        /// </summary>
+        /// <typeparam name="T">Expected inner exception type</typeparam>
+        /// <param name="top">Top exception</param>
+        /// <param name="foundException">Inner exception in top exception</param>
+        /// <returns>Wether type of inner exception equals T</returns>
+        public static bool TryFindInnerException<T>(Exception top, out T foundException) where T : Exception
         {
             if (top == null)
             {
@@ -213,72 +244,21 @@ namespace PasteSimple
                 return false;
             }
 
-            Console.WriteLine(top.GetType());
+            //Console.WriteLine(top.GetType());
             if (typeof(T) == top.GetType())
             {
                 foundException = (T)top;
                 return true;
             }
 
-            return tryFindInnerException<T>(top.InnerException, out foundException);
+            return TryFindInnerException<T>(top.InnerException, out foundException);
         }
 
-        /// <summary>
-        /// Start Server Button Click
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StartServerButton_Click(object sender, EventArgs e)
-        {
-            this.startServerButton.Enabled = false;
-            string url = "http://" + this.serverAddressTextBox.Text + ":" + this.serverPortTextBox.Text + "/";
-            this.LogWriter(string.Format("Starting server on: {0}", url));
-            this.LogWriter(string.Format("Test your server: {0}", url + "signalr/hubs"));
-            this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
-            try
-            {
-                //var a = 0; var b = 10 / a; //test other exception
-                signalRDisposable = WebApp.Start(url);
-            }
-            catch (System.Reflection.TargetInvocationException exception)
-            {
-                if (tryFindInnerException<HttpListenerException>(exception, out var httpListenerException))
-                {
-                    MessageBox.Show(httpListenerException.ToString());
-                    this.startServerButton.Enabled = true;
-                    return;
-                }
 
-                throw exception;
-            }
-
-            this.connectServerAddressTextBox.Text = globalHelper.GetMachineIpAddress();
-            this.connectServerPortTextBox.Text = this.serverPortTextBox.Text;
-            this.startServerButton.Enabled = false;
-
-            this.OpenPortButton.PerformClick();
-            /*}
-            catch (System.Reflection.TargetInvocationException ex)
-            {
-                this.LogWriter("You need to run as administrator");
-                this.LogWriter("Only server address localhost is allowed without administrator permissions");
-                MessageBox.Show("You need to run as administrator", "Error");
-                this.generaLogger.Error(ex);
-                this.startServerButton.Enabled = true;
-            }
-            catch (Exception ex)
-            {
-                this.LogWriter(ex.ToString());
-                this.generaLogger.Error(ex);
-                this.startServerButton.Enabled = true;
-            }*/
-        }
 
         /// <summary>
         /// Open Port Button Click
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void OpenPortButton_Click(object sender, EventArgs e)
         {
             this.OpenPortButton.Enabled = false;
@@ -354,7 +334,6 @@ namespace PasteSimple
         /// <summary>
         ///  WindProc for getting ClipBoard Data
         /// </summary>
-        /// <param name="m"></param>
         string lastSetText = "";
         bool waitCopyLoop = false;
         protected override void WndProc(ref Message m)
