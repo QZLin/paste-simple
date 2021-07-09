@@ -230,9 +230,9 @@ namespace PasteSimple
 
         }
         /// <summary>
-        /// Use to get inner exception
+        /// Get a inner exception
         /// </summary>
-        /// <typeparam name="T">Expected inner exception type</typeparam>
+        /// <typeparam name="T">type of expected inner exception</typeparam>
         /// <param name="top">Top exception</param>
         /// <param name="foundException">Inner exception in top exception</param>
         /// <returns>Wether type of inner exception equals T</returns>
@@ -243,8 +243,6 @@ namespace PasteSimple
                 foundException = null;
                 return false;
             }
-
-            //Console.WriteLine(top.GetType());
             if (typeof(T) == top.GetType())
             {
                 foundException = (T)top;
