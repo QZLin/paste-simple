@@ -138,6 +138,7 @@ namespace PasteSimple.SignalR
                 }
             }
         }
+        // Remap, Android app used this method
         public void SendCopiedText(string text) => ForwardCopiedText(text);
     }
 }

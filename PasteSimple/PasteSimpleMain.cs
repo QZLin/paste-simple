@@ -19,8 +19,8 @@ namespace PasteSimple
     public partial class PasteSimpleMainForm : Form
     {
         public string HubName = "SignalRHub";
-        public string ForwardCopiedTextName = "ForwardCopiedText";
-        public string ReceiveCopiedTextName = "ReceiveCopiedText";
+        public string ForwardCopiedTextFunc = "ForwardCopiedText";
+        public string ReceiveCopiedTextFunc = "ReceiveCopiedText";
 
         /// <summary>
         /// time interval for checking copying data
@@ -69,9 +69,6 @@ namespace PasteSimple
 
         private void PasteSimpleMainForm_Load(object sender, EventArgs e)
         {
-            //try
-            //{
-
             this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
 
             this.serverGroupBox.Show();
@@ -87,13 +84,6 @@ namespace PasteSimple
             //auto start server and self login on start
             this.startServerButton.PerformClick();
             this.loginButton.PerformClick();
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    this.LogWriter(ex.ToString());
-            //    this.generaLogger.Error(ex);
-            //}
         }
 
         /// <summary>
@@ -128,15 +118,6 @@ namespace PasteSimple
             this.startServerButton.Enabled = false;
 
             this.OpenPortButton.PerformClick();
-            /*}
-            catch (System.Reflection.TargetInvocationException ex)
-            {
-                this.LogWriter("You need to run as administrator");
-                this.LogWriter("Only server address localhost is allowed without administrator permissions");
-                MessageBox.Show("You need to run as administrator", "Error");
-                this.generaLogger.Error(ex);
-                this.startServerButton.Enabled = true;
-            }*/
         }
 
         /// <summary>
@@ -214,7 +195,7 @@ namespace PasteSimple
             this.LogWriter("Server connected, uid: " + uid);
 
             AddClipBoardListener();
-            this._hub.On(ReceiveCopiedTextName, delegate (String data)
+            this._hub.On(ReceiveCopiedTextFunc, delegate (String data)
             {
                 data = Uri.UnescapeDataString(data);
                 if (data != null && data.Length > 0)
@@ -289,12 +270,6 @@ namespace PasteSimple
                 this.LogWriter("You need to run as administrator");
                 MessageBox.Show("You need to run as administrator", "Error");
                 this.generaLogger.Error(ex);
-            }
-            catch (Exception ex)
-            {
-                this.OpenPortButton.Enabled = true;
-                this.LogWriter(ex.ToString());
-                this.generaLogger.Error(ex);
             }*/
         }
 
@@ -330,11 +305,11 @@ namespace PasteSimple
             NativeMethods.AddClipboardFormatListener(Handle);
         }
 
-        /// <summary>
-        ///  WindProc for getting ClipBoard Data
-        /// </summary>
         string lastSetText = "";
         bool waitCopyLoop = false;
+        /// <summary>
+        ///  WindProc for getting ClipBoard Data
+        /// </summary
         protected override void WndProc(ref Message m)
         {
             /*try
@@ -348,16 +323,14 @@ namespace PasteSimple
 
                 if (iData.GetDataPresent(DataFormats.UnicodeText) || iData.GetDataPresent(DataFormats.Text))
                 {
-                    string copied_content = Clipboard.GetText();
-                    if (copied_content != null && copied_content.Length > 0)
+                    string copied_text = Clipboard.GetText();
+                    if (copied_text != null && copied_text.Length > 0)
                     {
-                        if (!string.Equals(this.lastSetText, copied_content) || !waitCopyLoop)
+                        if (!string.Equals(this.lastSetText, copied_text) || !waitCopyLoop)
                         {
-                            this.LogWriter("clip: " + copied_content);
-                            var encoded = Uri.EscapeDataString(copied_content);
-                            //byte[] byteArray = Encoding.UTF8.GetBytes(copied_content);
-                            _hub.Invoke(ForwardCopiedTextName,
-                                encoded);
+                            this.LogWriter("clip: " + copied_text);
+                            var encoded = Uri.EscapeDataString(copied_text);
+                            _hub.Invoke(ForwardCopiedTextFunc, encoded);
                         }
                         else
                             waitCopyLoop = false;
