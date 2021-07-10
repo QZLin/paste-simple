@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using NLog;
+using System.Threading;
 using System.Windows.Forms;
-using NLog;
 
 namespace PasteSimple.Helpers
 {

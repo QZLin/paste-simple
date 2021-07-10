@@ -1,15 +1,16 @@
-﻿using PasteSimple.Models;
-using NLog;
-using System;
+﻿using NLog;
+using PasteSimple.Models;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PasteSimple.SignalR {
+namespace PasteSimple.SignalR
+{
     /// <summary>
     /// Users
     /// </summary>
-    static class Users {
+    static class Users
+    {
 
         /// <summary>
         /// General Logger Target
@@ -27,16 +28,20 @@ namespace PasteSimple.SignalR {
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="userConnection"></param>
-        public static void AddUserConnection(string uid, UserConnection userConnection) {
+        public static void AddUserConnection(string uid, UserConnection userConnection)
+        {
 
-            if (users_dictionary.ContainsKey(uid)) {
+            if (users_dictionary.ContainsKey(uid))
+            {
                 //if the user has already few connected devices and one more device is connecting now so adding to existing list
                 ArrayList current_list = users_dictionary[uid];
                 current_list.Add(userConnection);
                 users_dictionary[uid] = current_list;
                 generaLogger.Info("Updated user uid " + uid + " connection list");
                 //Currently every new connection even from the same device id is added in future if the device id is same but differen connectionID then need to handle that case
-            } else {
+            }
+            else
+            {
                 // If the new connection is first connection of the user
                 users_dictionary.Add(uid, new ArrayList());
                 ArrayList current_list = users_dictionary[uid];
@@ -54,10 +59,14 @@ namespace PasteSimple.SignalR {
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public static ArrayList GetUserConnections(string uid) {
-            if (users_dictionary.ContainsKey(uid)) {
+        public static ArrayList GetUserConnections(string uid)
+        {
+            if (users_dictionary.ContainsKey(uid))
+            {
                 return users_dictionary[uid];
-            } else {
+            }
+            else
+            {
                 return null;
             }
         }
@@ -67,25 +76,32 @@ namespace PasteSimple.SignalR {
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="connection_id"></param>
-        public static void DeleteUserConnection(string uid, string connection_id) {
-            if (users_dictionary.ContainsKey(uid)) {
+        public static void DeleteUserConnection(string uid, string connection_id)
+        {
+            if (users_dictionary.ContainsKey(uid))
+            {
 
                 int index_to_delete = -1;
 
                 ArrayList current_list = users_dictionary[uid];
-                for (int i = 0; i < current_list.Count; i++) {
+                for (int i = 0; i < current_list.Count; i++)
+                {
                     UserConnection userConnection = (UserConnection)current_list[i];
-                    if (userConnection.connection_id.Equals(connection_id)) {
+                    if (userConnection.connection_id.Equals(connection_id))
+                    {
                         index_to_delete = i;
                         break;
-                    } else {
+                    }
+                    else
+                    {
                         // Do Nothing as this is not the connection to delete
                     }
 
                 }
 
                 // Now deleting at the given index
-                if (index_to_delete != -1) {
+                if (index_to_delete != -1)
+                {
                     UserConnection userConnection = (UserConnection)current_list[index_to_delete];
                     generaLogger.Info("Deleted Successfully a connection of user : " + uid + " connection id : " + userConnection.connection_id + " Platform : " + userConnection.platform + " Device Id : " + userConnection.device_id);
                     current_list.RemoveAt(index_to_delete);
@@ -100,14 +116,18 @@ namespace PasteSimple.SignalR {
         /// </summary>
         /// <param name="connection_id"></param>
         /// <returns></returns>
-        public static string GetUIDFromConnectionID(string connection_id) {
+        public static string GetUIDFromConnectionID(string connection_id)
+        {
             string[] uids = users_dictionary.Keys.ToArray();
 
-            foreach (string uid in uids) {
+            foreach (string uid in uids)
+            {
                 ArrayList current_list = users_dictionary[uid];
-                for (int i = 0; i < current_list.Count; i++) {
+                for (int i = 0; i < current_list.Count; i++)
+                {
                     UserConnection userConnection = (UserConnection)current_list[i];
-                    if (userConnection.connection_id.Equals(connection_id)) {
+                    if (userConnection.connection_id.Equals(connection_id))
+                    {
                         return uid;
                     }
                 }

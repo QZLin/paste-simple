@@ -1,18 +1,20 @@
-﻿using PasteSimple.Models;
-using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using NLog;
+using PasteSimple.Models;
 using System;
 using System.Collections;
 using System.Threading.Tasks;
 
-namespace PasteSimple.SignalR {
+namespace PasteSimple.SignalR
+{
 
     /// <summary>
     /// Signal R Hub Main Class
     /// </summary>
     [HubName("SignalRHub")]
-    public class SignalRHub : Hub {
+    public class SignalRHub : Hub
+    {
 
         /// <summary>
         /// General Logger Target
@@ -28,7 +30,8 @@ namespace PasteSimple.SignalR {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj) {
+        public override bool Equals(object obj)
+        {
             return base.Equals(obj);
         }
 
@@ -36,7 +39,8 @@ namespace PasteSimple.SignalR {
         /// GetHashCode
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() {
+        public override int GetHashCode()
+        {
             return base.GetHashCode();
         }
 
@@ -44,7 +48,8 @@ namespace PasteSimple.SignalR {
         /// On Connected Event
         /// </summary>
         /// <returns></returns>
-        public override Task OnConnected() {
+        public override Task OnConnected()
+        {
             IRequest request = Context.Request;
             string connectionID = Context.ConnectionId;
             string uid = request.QueryString.Get("uid");
@@ -52,7 +57,7 @@ namespace PasteSimple.SignalR {
             string device_id = request.QueryString.Get("device_id");
             string onConnectLog = String.Format("uid  : {0} | platform : {1} | device_id : {2} | connectionID : {3}", uid, platform, device_id, connectionID);
             generaLogger.Info(onConnectLog);
-           
+
 
             //MessageBox.Show(onConnectLog);
             //Program.loginSignUpForm.LogWriter(onConnectLog);
@@ -66,12 +71,16 @@ namespace PasteSimple.SignalR {
         /// </summary>
         /// <param name="stopCalled"></param>
         /// <returns></returns>
-        public override Task OnDisconnected(bool stopCalled) {
+        public override Task OnDisconnected(bool stopCalled)
+        {
             generaLogger.Info("OnDisconnected : " + Context.ConnectionId);
             string searched_uid = Users.GetUIDFromConnectionID(Context.ConnectionId);
-            if (!searched_uid.Equals("") || searched_uid.Length > 0) {
+            if (!searched_uid.Equals("") || searched_uid.Length > 0)
+            {
                 Users.DeleteUserConnection(searched_uid, Context.ConnectionId);
-            } else {
+            }
+            else
+            {
                 generaLogger.Info("UID not found for user connection string : " + Context.ConnectionId);
             }
             return base.OnDisconnected(stopCalled);
@@ -81,7 +90,8 @@ namespace PasteSimple.SignalR {
         /// On Reconnected Event
         /// </summary>
         /// <returns></returns>
-        public override Task OnReconnected() {
+        public override Task OnReconnected()
+        {
             return base.OnReconnected();
         }
 
@@ -89,7 +99,8 @@ namespace PasteSimple.SignalR {
         /// Dispose
         /// </summary>
         /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing) {
+        protected override void Dispose(bool disposing)
+        {
             base.Dispose(disposing);
         }
 
@@ -97,7 +108,8 @@ namespace PasteSimple.SignalR {
         /// Check Length
         /// </summary>
         /// <param name="message"></param>
-        public void DetermineLength(string message) {
+        public void DetermineLength(string message)
+        {
 
             generaLogger.Info(message);
             string newMessage = string.Format(@"{0} has a length of: {1}", message, message.Length);
@@ -108,19 +120,24 @@ namespace PasteSimple.SignalR {
         /// Send Copied Text to Every Client of the user
         /// </summary>
         /// <param name="text"></param>
-        public void SendCopiedText(string text) {
+        /// old name: SendCopiedText
+        public void ForwardCopiedText(string text)
+        {
 
             string connection_id = Context.ConnectionId;
             string uid = Users.GetUIDFromConnectionID(connection_id);
             generaLogger.Info("Received from : " + connection_id + " uid : " + uid + " this : " + text);
             ArrayList connectionList = Users.GetUserConnections(uid);
-            for (int i = 0; i < connectionList.Count; i++) {
-                UserConnection userConnection = (UserConnection)connectionList[i];
-                if (!userConnection.connection_id.Equals(connection_id)) {
+
+            foreach (UserConnection userConnection in connectionList)
+            {
+                if (!userConnection.connection_id.Equals(connection_id))
+                {
                     //the above if condition is to send to only those connection except the current incoming
                     Clients.Client(userConnection.connection_id).ReceiveCopiedText(text);
                 }
             }
         }
+        public void SendCopiedText(string text) => ForwardCopiedText(text);
     }
 }

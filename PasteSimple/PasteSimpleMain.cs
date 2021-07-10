@@ -1,16 +1,14 @@
-﻿using PasteSimple.Helpers;
-using Microsoft.AspNet.SignalR.Client;
+﻿using Microsoft.AspNet.SignalR.Client;
 using Microsoft.Owin.Hosting;
 using NLog;
+using PasteSimple.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using System.Net;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace PasteSimple
 {
@@ -20,6 +18,9 @@ namespace PasteSimple
     /// </summary>
     public partial class PasteSimpleMainForm : Form
     {
+        public string HubName = "SignalRHub";
+        public string ForwardCopiedTextName = "ForwardCopiedText";
+        public string ReceiveCopiedTextName = "ReceiveCopiedText";
 
         /// <summary>
         /// time interval for checking copying data
@@ -39,9 +40,9 @@ namespace PasteSimple
         /// <summary>
         /// signal R Disposable Hub object
         /// </summary>
-        private IDisposable signalRDisposable { get; set; }
+        private IDisposable Web { get; set; }
 
-        bool isSignalRConnected = false;
+        //bool isSignalRConnected = false;
 
         /// <summary>
         /// User Id
@@ -108,7 +109,7 @@ namespace PasteSimple
             try
             {
                 //var a = 0; var b = 10 / a; //test other exception
-                signalRDisposable = WebApp.Start(url);
+                Web = WebApp.Start(url);
             }
             catch (System.Reflection.TargetInvocationException exception)
             {
@@ -188,7 +189,7 @@ namespace PasteSimple
             };
 
             var connection = new HubConnection("http://" + serverAddress + ":" + serverPort, keyValuePairs);
-            this._hub = connection.CreateHubProxy(ConfigurationManager.AppSettings["hub_name"]);
+            this._hub = connection.CreateHubProxy(HubName);
             try
             {
                 connection.Start().Wait();
@@ -213,7 +214,7 @@ namespace PasteSimple
             this.LogWriter("Server connected, uid: " + uid);
 
             AddClipBoardListener();
-            this._hub.On(ConfigurationManager.AppSettings["recieve_copied_text_signalr_method_name"], delegate (String data)
+            this._hub.On(ReceiveCopiedTextName, delegate (String data)
             {
                 data = Uri.UnescapeDataString(data);
                 if (data != null && data.Length > 0)
@@ -355,7 +356,7 @@ namespace PasteSimple
                             this.LogWriter("clip: " + copied_content);
                             var encoded = Uri.EscapeDataString(copied_content);
                             //byte[] byteArray = Encoding.UTF8.GetBytes(copied_content);
-                            _hub.Invoke(ConfigurationManager.AppSettings["send_copied_text_signalr_method_name"],
+                            _hub.Invoke(ForwardCopiedTextName,
                                 encoded);
                         }
                         else
