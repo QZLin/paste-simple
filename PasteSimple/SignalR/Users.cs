@@ -34,21 +34,23 @@ namespace PasteSimple.SignalR
             if (users_dictionary.ContainsKey(uid))
             {
                 //if the user has already few connected devices and one more device is connecting now so adding to existing list
-                ArrayList current_list = users_dictionary[uid];
-                current_list.Add(userConnection);
-                users_dictionary[uid] = current_list;
+                //ArrayList current_list = users_dictionary[uid];
+                //current_list.Add(userConnection);
+                //users_dictionary[uid] = current_list;
                 generaLogger.Info("Updated user uid " + uid + " connection list");
                 //Currently every new connection even from the same device id is added in future if the device id is same but differen connectionID then need to handle that case
             }
             else
             {
                 // If the new connection is first connection of the user
-                users_dictionary.Add(uid, new ArrayList());
-                ArrayList current_list = users_dictionary[uid];
-                current_list.Add(userConnection);
-                users_dictionary[uid] = current_list;
+                users_dictionary[uid] = new ArrayList();
+
+                //ArrayList current_list = users_dictionary[uid];
+                //current_list.Add(userConnection);
+                //users_dictionary[uid] = current_list;
                 generaLogger.Info("New user uid " + uid + " connection list created");
             }
+            users_dictionary[uid].Add(userConnection);
 
             ArrayList connections = users_dictionary[uid];
             generaLogger.Info("Total Number of Connections now are : " + connections.Count);
@@ -118,21 +120,27 @@ namespace PasteSimple.SignalR
         /// <returns></returns>
         public static string GetUIDFromConnectionID(string connection_id)
         {
-            string[] uids = users_dictionary.Keys.ToArray();
-
-            foreach (string uid in uids)
+            //string[] uids = users_dictionary.Keys.ToArray();
+            //var result = from uid in users_dictionary.Keys
+            //             where
+            //        (
+            //        from UserConnection userC in users_dictionary[uid]
+            //        where userC.connection_id.Equals(connection_id)
+            //        select userC
+            //        ).Any()
+            //             select uid;
+            //if (result.Count() != 1)
+            //    return null;
+            //return result.FirstOrDefault(null);
+            foreach (string uid in users_dictionary.Keys.ToArray())
             {
-                ArrayList current_list = users_dictionary[uid];
-                for (int i = 0; i < current_list.Count; i++)
-                {
-                    UserConnection userConnection = (UserConnection)current_list[i];
-                    if (userConnection.connection_id.Equals(connection_id))
-                    {
-                        return uid;
-                    }
-                }
+                var r = from UserConnection userConnection in users_dictionary[uid]
+                        where userConnection.connection_id.Equals(connection_id)
+                        select userConnection;
+                if (r.Any())
+                    return uid;
             }
-            return "";
+            return null;
         }
 
     }
