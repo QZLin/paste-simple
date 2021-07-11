@@ -10,6 +10,10 @@ namespace PasteSimple.Helpers
 {
     class ConfigHelper
     {
+
+    }
+    class Config
+    {
         string configFile;
         public Dictionary<string, object> dict = new Dictionary<string, object>()
         {
@@ -17,7 +21,7 @@ namespace PasteSimple.Helpers
             {"auto_start",true}
         };
         //public Dictionary<string, object> dict = new Dictionary<string, object>();
-        public ConfigHelper(string path)
+        public Config(string path)
         {
             configFile = path;
         }

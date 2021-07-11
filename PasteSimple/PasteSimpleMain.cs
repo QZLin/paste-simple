@@ -67,6 +67,7 @@ namespace PasteSimple
             this.globalHelper = new GlobalHelper();
         }
 
+        readonly Config config = new Config("PasteSimpleConfig.xml");
         private void PasteSimpleMainForm_Load(object sender, EventArgs e)
         {
             this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
@@ -74,13 +75,12 @@ namespace PasteSimple
             this.serverGroupBox.Show();
             this.serverAddressTextBox.Text = "*";
 
-            ConfigHelper config = new ConfigHelper("PasteSimpleConfig.xml");
 
             if (!config.ConfigExist())
                 config.WriteToFile();
 
             config.Read();
-            string last_uid = config.GetValue("last_uid").Trim();
+            string last_uid = config.GetValue("last_uid");
 
 
             if (last_uid.Length == 0)
@@ -108,7 +108,7 @@ namespace PasteSimple
             this.startServerButton.Enabled = false;
             string url = "http://" + this.serverAddressTextBox.Text + ":" + this.serverPortTextBox.Text + "/";
             this.LogWriter(string.Format("Starting server on: {0}", url));
-            this.LogWriter(string.Format("Test your server: {0}", url + "signalr/hubs"));
+            this.LogWriter(string.Format("Test your server: {0}", url.Replace("*","localhost") + "signalr/hubs"));
             this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
             try
             {
