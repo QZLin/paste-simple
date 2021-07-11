@@ -74,16 +74,30 @@ namespace PasteSimple
             this.serverGroupBox.Show();
             this.serverAddressTextBox.Text = "*";
 
-            if (File.Exists("last_uid"))
-                this.connectUidTextBox.Text = File.ReadAllText("last_uid");
-            else
+            ConfigHelper config = new ConfigHelper("PasteSimpleConfig.xml");
+
+            if (!config.ConfigExist())
+                config.WriteToFile();
+
+            config.Read();
+            string last_uid = config.GetValue("last_uid").Trim();
+
+
+            if (last_uid.Length == 0)
             {
-                this.connectUidTextBox.Text = new Random().Next(1000, 9999).ToString();
-                File.WriteAllText("last_uid", this.connectUidTextBox.Text);
+                last_uid = new Random().Next(1000, 9999).ToString();
+                config.dict["last_uid"] = last_uid;
+                config.WriteToFile();
             }
-            //auto start server and self login on start
-            this.startServerButton.PerformClick();
-            this.loginButton.PerformClick();
+            this.connectUidTextBox.Text = last_uid;
+
+            if (config.GetValue("auto_start").Equals("True"))
+            {
+                //auto start server and self login on start
+                this.startServerButton.PerformClick();
+                this.loginButton.PerformClick();
+            }
+
         }
 
         /// <summary>

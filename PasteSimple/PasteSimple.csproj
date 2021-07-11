@@ -234,6 +234,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\ClipBoardHelper.cs" />
+    <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\GlobalHelper.cs" />
     <Compile Include="PasteSimpleMain.cs">
       <SubType>Form</SubType>
