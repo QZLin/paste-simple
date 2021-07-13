@@ -18,9 +18,10 @@ namespace PasteSimple
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                loginSignUpForm = new PasteSimpleMainForm();
+                loginSignUpForm = new PasteSimpleMainForm(Args);
                 Application.Run(loginSignUpForm);
             }
+
 
 
             System.Security.Principal.WindowsIdentity identity = System.Security.Principal.WindowsIdentity.GetCurrent();

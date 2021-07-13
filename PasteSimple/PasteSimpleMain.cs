@@ -61,15 +61,18 @@ namespace PasteSimple
         /// <summary>
         /// Default Constructor
         /// </summary>
-        internal PasteSimpleMainForm()
+        string[] args;
+        internal PasteSimpleMainForm(string[] Args)
         {
             InitializeComponent();
             this.globalHelper = new GlobalHelper();
+            this.args = Args;
         }
 
         readonly Config config = new Config("PasteSimpleConfig.xml");
         private void PasteSimpleMainForm_Load(object sender, EventArgs e)
         {
+
             this.LogWriter("Your ip is: " + globalHelper.GetMachineIpAddress());
 
             this.serverGroupBox.Show();
@@ -97,7 +100,21 @@ namespace PasteSimple
                 this.startServerButton.PerformClick();
                 this.loginButton.PerformClick();
             }
+        }
 
+
+        private void PasteSimpleMainForm_Shown(object sender, EventArgs e)
+        {
+            // Handle arguments
+            foreach (var arg in this.args)
+            {
+                switch (arg)
+                {
+                    case "--hide":
+                        this.Hide();
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -386,6 +403,7 @@ namespace PasteSimple
             else
                 this.Show();
         }
+
     }
 
     internal static class NativeMethods

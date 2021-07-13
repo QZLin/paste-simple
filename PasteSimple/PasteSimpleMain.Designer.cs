@@ -265,6 +265,7 @@
             this.Name = "PasteSimpleMainForm";
             this.Text = "PasteSimple";
             this.Load += new System.EventHandler(this.PasteSimpleMainForm_Load);
+            this.Shown += new System.EventHandler(this.PasteSimpleMainForm_Shown);
             this.clientGroupBox.ResumeLayout(false);
             this.clientGroupBox.PerformLayout();
             this.serverGroupBox.ResumeLayout(false);
