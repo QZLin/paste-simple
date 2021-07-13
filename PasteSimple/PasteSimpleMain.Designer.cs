@@ -23,6 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PasteSimpleMainForm));
             this.loginButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.RichTextBox();
@@ -42,8 +43,13 @@
             this.serverPort = new System.Windows.Forms.Label();
             this.serverAddress = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.MenuStripNotify = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clientGroupBox.SuspendLayout();
             this.serverGroupBox.SuspendLayout();
+            this.MenuStripNotify.SuspendLayout();
             this.SuspendLayout();
             // 
             // loginButton
@@ -58,10 +64,10 @@
             // 
             // consoleTextBox
             // 
-            this.consoleTextBox.Location = new System.Drawing.Point(12, 243);
+            this.consoleTextBox.Location = new System.Drawing.Point(12, 211);
             this.consoleTextBox.Name = "consoleTextBox";
             this.consoleTextBox.ReadOnly = true;
-            this.consoleTextBox.Size = new System.Drawing.Size(721, 273);
+            this.consoleTextBox.Size = new System.Drawing.Size(721, 305);
             this.consoleTextBox.TabIndex = 6;
             this.consoleTextBox.Text = "";
             // 
@@ -216,6 +222,37 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "UID";
             // 
+            // notifyIcon
+            // 
+            this.notifyIcon.ContextMenuStrip = this.MenuStripNotify;
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "PasteSimple";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
+            // 
+            // MenuStripNotify
+            // 
+            this.MenuStripNotify.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showToolStripMenuItem,
+            this.hideToolStripMenuItem});
+            this.MenuStripNotify.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.MenuStripNotify.Name = "contextMenuStrip1";
+            this.MenuStripNotify.Size = new System.Drawing.Size(108, 48);
+            // 
+            // showToolStripMenuItem
+            // 
+            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.showToolStripMenuItem.Text = "Show";
+            this.showToolStripMenuItem.Click += new System.EventHandler(this.showMenuStripNotifyItem_Click);
+            // 
+            // hideToolStripMenuItem
+            // 
+            this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.hideToolStripMenuItem.Text = "Hide";
+            this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideMenuStripNotifyItem_Click);
+            // 
             // PasteSimpleMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -232,6 +269,7 @@
             this.clientGroupBox.PerformLayout();
             this.serverGroupBox.ResumeLayout(false);
             this.serverGroupBox.PerformLayout();
+            this.MenuStripNotify.ResumeLayout(false);
             this.ResumeLayout(false);
 
 		}
@@ -256,5 +294,9 @@
         private System.Windows.Forms.TextBox connectServerPortTextBox;
         private System.Windows.Forms.RichTextBox consoleTextBox;
         private System.Windows.Forms.Button OpenPortButton;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
+        private System.Windows.Forms.ContextMenuStrip MenuStripNotify;
+        private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hideToolStripMenuItem;
     }
 }

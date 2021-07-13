@@ -108,7 +108,7 @@ namespace PasteSimple
             this.startServerButton.Enabled = false;
             string url = "http://" + this.serverAddressTextBox.Text + ":" + this.serverPortTextBox.Text + "/";
             this.LogWriter(string.Format("Starting server on: {0}", url));
-            this.LogWriter(string.Format("Test your server: {0}", url.Replace("*","localhost") + "signalr/hubs"));
+            this.LogWriter(string.Format("Test your server: {0}", url.Replace("*", "localhost") + "signalr/hubs"));
             this.LogWriter("You need to open a port in outbound rule of Windows FireWall. PORT: " + this.serverPortTextBox.Text);
             try
             {
@@ -323,7 +323,7 @@ namespace PasteSimple
         bool waitCopyLoop = false;
         /// <summary>
         ///  WindProc for getting ClipBoard Data
-        /// </summary
+        /// </summary>
         protected override void WndProc(ref Message m)
         {
             /*try
@@ -367,6 +367,25 @@ namespace PasteSimple
         }
 
 
+
+
+        private void showMenuStripNotifyItem_Click(object sender, EventArgs e)
+        {
+            this.Show();
+        }
+
+        private void hideMenuStripNotifyItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+        }
+
+        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (this.Visible)
+                this.Hide();
+            else
+                this.Show();
+        }
     }
 
     internal static class NativeMethods
