@@ -404,6 +404,10 @@ namespace PasteSimple
                 this.Show();
         }
 
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
     }
 
     internal static class NativeMethods
