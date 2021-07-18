@@ -408,6 +408,16 @@ namespace PasteSimple
         {
             Application.Exit();
         }
+
+        private void PasteSimpleMainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
+
+        }
     }
 
     internal static class NativeMethods

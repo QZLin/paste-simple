@@ -239,26 +239,26 @@
             this.exitToolStripMenuItem});
             this.MenuStripNotify.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
             this.MenuStripNotify.Name = "contextMenuStrip1";
-            this.MenuStripNotify.Size = new System.Drawing.Size(181, 92);
+            this.MenuStripNotify.Size = new System.Drawing.Size(108, 70);
             // 
             // showToolStripMenuItem
             // 
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showMenuStripNotifyItem_Click);
             // 
             // hideToolStripMenuItem
             // 
             this.hideToolStripMenuItem.Name = "hideToolStripMenuItem";
-            this.hideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.hideToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.hideToolStripMenuItem.Text = "Hide";
             this.hideToolStripMenuItem.Click += new System.EventHandler(this.hideMenuStripNotifyItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -273,6 +273,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PasteSimpleMainForm";
             this.Text = "PasteSimple";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PasteSimpleMainForm_FormClosing);
             this.Load += new System.EventHandler(this.PasteSimpleMainForm_Load);
             this.Shown += new System.EventHandler(this.PasteSimpleMainForm_Shown);
             this.clientGroupBox.ResumeLayout(false);
