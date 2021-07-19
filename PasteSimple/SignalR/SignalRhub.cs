@@ -75,8 +75,8 @@ namespace PasteSimple.SignalR
         {
             generaLogger.Info("OnDisconnected : " + Context.ConnectionId);
             string searched_uid = Users.GetUIDFromConnectionID(Context.ConnectionId);
-            if (!searched_uid.Equals("") || searched_uid.Length > 0)
-            {
+            if (searched_uid != null ||!searched_uid.Equals("") || searched_uid.Length > 0)
+            {//TODO 
                 Users.DeleteUserConnection(searched_uid, Context.ConnectionId);
             }
             else
