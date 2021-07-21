@@ -199,7 +199,8 @@ namespace PasteSimple
                 { "platform", "windows" },
                 { "device_id", globalHelper.GetMacAddress() }
             };
-
+            if (serverAddress.Trim().Equals(""))
+                serverAddress = "127.0.0.1";
             var connection = new HubConnection("http://" + serverAddress + ":" + serverPort, keyValuePairs);
             this._hub = connection.CreateHubProxy(HubName);
             try
